@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+  }
+  h1, h2, h3, .font-display { font-family: 'Fraunces', serif; }
+}
+
+@layer components {
+  .siih-card {
+    @apply bg-surface border border-line rounded-md2 shadow-panel;
+  }
+  .siih-input {
+    @apply w-full rounded-md2 border border-line bg-surface px-3 py-2 text-sm text-ink
+           placeholder:text-inksoft/60 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition;
+  }
+  .siih-label {
+    @apply block text-xs font-medium text-inksoft mb-1 tracking-wide uppercase;
+  }
+  .siih-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md2 px-4 py-2 text-sm font-medium
+           transition disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .siih-btn-primary {
+    @apply siih-btn bg-brand text-white hover:bg-brand-deep;
+  }
+  .siih-btn-ghost {
+    @apply siih-btn bg-transparent text-ink border border-line hover:bg-brand-soft;
+  }
+  .siih-btn-danger {
+    @apply siih-btn bg-triaje-rojo text-white hover:opacity-90;
+  }
+  .siih-table {
+    @apply w-full text-sm;
+  }
+  .siih-table th {
+    @apply text-left text-xs uppercase tracking-wide text-inksoft font-medium py-2 px-3 border-b border-line;
+  }
+  .siih-table td {
+    @apply py-2.5 px-3 border-b border-line/70 text-ink;
+  }
+  .siih-table tr:hover td {
+    @apply bg-brand-soft/40;
+  }
+  .siih-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  .siih-badge-verde { @apply bg-triaje-verdeSoft text-triaje-verde; }
+  .siih-badge-amarillo { @apply bg-triaje-amarilloSoft text-triaje-amarillo; }
+  .siih-badge-rojo { @apply bg-triaje-rojoSoft text-triaje-rojo; }
+  .siih-badge-neutro { @apply bg-line/60 text-inksoft; }
+}
