@@ -94,7 +94,7 @@ export default function Laboratorio() {
       <PageHeader
         icon={FlaskConical}
         title="Laboratorio"
-        subtitle="Exámenes solicitados y resultados (RF08)."
+        subtitle="Exámenes solicitados y resultados."
         action={<button className="siih-btn-primary" onClick={abrirCrear}>Registrar examen</button>}
       />
 

@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { historiaClinicaApi } from '../../api/historiaClinica'
 import { pacientesApi } from '../../api/pacientes'
+import { citasApi } from '../../api/citas'
 import { apiError } from '../../api/client'
 import { FileText } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
@@ -14,6 +15,9 @@ export default function HistoriaClinica() {
   const [pacientes, setPacientes] = useState([])
   const [idPaciente, setIdPaciente] = useState('')
   const [consultas, setConsultas] = useState([])
+  const [medicos, setMedicos] = useState([])
+  const [citas, setCitas] = useState([])
+  const [especialidades, setEspecialidades] = useState([])
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState('')
 
@@ -22,8 +26,23 @@ export default function HistoriaClinica() {
   const [guardando, setGuardando] = useState(false)
   const [errorForm, setErrorForm] = useState('')
 
+  const mapaMedicos = useMemo(() => {
+    const m = {}
+    medicos.forEach((doc) => (m[doc.id_medico] = doc.nombre_usuario))
+    return m
+  }, [medicos])
+
+  const mapaEspecialidades = useMemo(() => {
+    const m = {}
+    especialidades.forEach((esp) => (m[esp.id_especialidad] = esp.nombre))
+    return m
+  }, [especialidades])
+
   useEffect(() => {
     pacientesApi.listar().then(setPacientes).catch((err) => setError(apiError(err)))
+    citasApi.medicos().then(setMedicos).catch((err) => setError(apiError(err)))
+    citasApi.listar().then(setCitas).catch((err) => setError(apiError(err)))
+    citasApi.especialidades().then(setEspecialidades).catch((err) => setError(apiError(err)))
   }, [])
 
   const buscarHistorial = async (id) => {
@@ -125,7 +144,7 @@ export default function HistoriaClinica() {
           columns={[
             { key: 'id_consulta', header: '#' },
             { key: 'fecha', header: 'Fecha' },
-            { key: 'id_medico', header: 'Médico', render: (r) => `#${r.id_medico}` },
+            { key: 'id_medico', header: 'Médico', render: (r) => mapaMedicos[r.id_medico] || `#${r.id_medico}` },
             { key: 'motivo', header: 'Motivo', render: (r) => r.motivo || '—' },
             { key: 'diagnostico', header: 'Diagnóstico', render: (r) => r.diagnostico || '—' },
           ]}
@@ -144,24 +163,46 @@ export default function HistoriaClinica() {
           {!(panel && panel.editando) && (
             <>
               <div>
-                <label className="siih-label">ID de cita asociada</label>
-                <input
+                <label className="siih-label">Cita asociada</label>
+                <select
                   className="siih-input"
-                  type="number"
                   required
                   value={form.id_cita}
-                  onChange={(e) => setForm({ ...form, id_cita: e.target.value })}
-                />
+                  onChange={(e) => {
+                    const id_cita = e.target.value
+                    const selectedCita = citas.find((c) => c.id_cita === Number(id_cita))
+                    setForm({
+                      ...form,
+                      id_cita,
+                      id_medico: selectedCita ? String(selectedCita.id_medico) : '',
+                    })
+                  }}
+                >
+                  <option value="">Selecciona cita asociada…</option>
+                  {citas
+                    .filter((c) => c.id_paciente === Number(idPaciente) && c.estado !== 'Cancelada')
+                    .map((c) => (
+                      <option key={c.id_cita} value={c.id_cita}>
+                        Cita #{c.id_cita} — {mapaEspecialidades[c.id_especialidad] || `Esp. #${c.id_especialidad}`} — {new Date(c.fecha_hora).toLocaleString('es-BO')}
+                      </option>
+                    ))}
+                </select>
               </div>
               <div>
-                <label className="siih-label">ID médico</label>
-                <input
+                <label className="siih-label">Médico</label>
+                <select
                   className="siih-input"
-                  type="number"
                   required
                   value={form.id_medico}
                   onChange={(e) => setForm({ ...form, id_medico: e.target.value })}
-                />
+                >
+                  <option value="">Selecciona médico…</option>
+                  {medicos.map((m) => (
+                    <option key={m.id_medico} value={m.id_medico}>
+                      {m.nombre_usuario} (Colegiatura {m.nro_colegiatura})
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="siih-label">Fecha</label>

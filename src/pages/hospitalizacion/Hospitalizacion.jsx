@@ -155,7 +155,7 @@ export default function Hospitalizacion() {
         />
       )}
 
-      <SidePanel open={panelCrear} onClose={() => setPanelCrear(false)} title="Registrar ingreso" subtitle="RF14 / RF15">
+      <SidePanel open={panelCrear} onClose={() => setPanelCrear(false)} title="Registrar ingreso" subtitle="Selecciona la cama y el origen del ingreso.">
         <form onSubmit={guardarIngreso} className="space-y-4">
           {errorForm && <AlertBanner tone="error">{errorForm}</AlertBanner>}
           <div>

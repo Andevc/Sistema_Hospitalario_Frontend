@@ -171,7 +171,9 @@ export default function Facturacion() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="font-display text-xl text-ink">Factura #{factura.id_factura}</p>
-                  <p className="text-xs text-inksoft mt-0.5">Paciente #{factura.id_paciente} · {factura.fecha}</p>
+                  <p className="text-xs text-inksoft mt-0.5">
+                    Paciente: {pacientes.find((p) => p.id_paciente === factura.id_paciente)?.nombre_completo || `#${factura.id_paciente}`} · {factura.fecha}
+                  </p>
                 </div>
                 <StatusBadge value={factura.estado} />
               </div>

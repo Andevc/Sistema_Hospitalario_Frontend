@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { farmaciaApi } from '../../api/farmacia'
+import { recetasApi } from '../../api/recetas'
 import { apiError } from '../../api/client'
 import { Pill } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
@@ -11,6 +12,7 @@ import StatusBadge from '../../components/StatusBadge'
 
 export default function Farmacia() {
   const [medicamentos, setMedicamentos] = useState([])
+  const [recetas, setRecetas] = useState([])
   const [soloAlertas, setSoloAlertas] = useState(false)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
@@ -25,7 +27,12 @@ export default function Farmacia() {
     setCargando(true)
     setError('')
     try {
-      setMedicamentos(alertas ? await farmaciaApi.alertasStock() : await farmaciaApi.listarMedicamentos())
+      const [mList, rList] = await Promise.all([
+        alertas ? farmaciaApi.alertasStock() : farmaciaApi.listarMedicamentos(),
+        recetasApi.listar(),
+      ])
+      setMedicamentos(mList)
+      setRecetas(rList)
     } catch (err) {
       setError(apiError(err))
     } finally {
@@ -85,7 +92,7 @@ export default function Farmacia() {
       ) : (
         <DataTable
           rowKey={(r) => r.id_medicamento}
-          emptyLabel={soloAlertas ? 'No hay medicamentos con stock bajo. ✅' : 'No hay medicamentos registrados.'}
+          emptyLabel={soloAlertas ? 'No hay medicamentos con stock bajo. ' : 'No hay medicamentos registrados.'}
           columns={[
             { key: 'id_medicamento', header: '#' },
             { key: 'nombre', header: 'Medicamento' },
@@ -106,14 +113,22 @@ export default function Farmacia() {
         <form onSubmit={dispensar} className="space-y-4">
           {errorForm && <AlertBanner tone="error">{errorForm}</AlertBanner>}
           <div>
-            <label className="siih-label">ID receta</label>
-            <input
+            <label className="siih-label">Receta pendiente</label>
+            <select
               className="siih-input"
-              type="number"
               required
               value={form.id_receta}
               onChange={(e) => setForm({ ...form, id_receta: e.target.value })}
-            />
+            >
+              <option value="">Selecciona receta pendiente…</option>
+              {recetas
+                .filter((r) => r.estado === 'Pendiente')
+                .map((r) => (
+                  <option key={r.id_receta} value={r.id_receta}>
+                    Receta #{r.id_receta} — Paciente: {r.paciente_nombre || '—'} — Medicamento: {r.medicamento_nombre || `#${r.id_medicamento}`} ({r.cantidad} u.)
+                  </option>
+                ))}
+            </select>
           </div>
           <div>
             <label className="siih-label">Cantidad (opcional)</label>

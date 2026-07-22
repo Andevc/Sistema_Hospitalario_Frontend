@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { emergenciaApi } from '../../api/emergencia'
 import { pacientesApi } from '../../api/pacientes'
+import { citasApi } from '../../api/citas'
 import { apiError } from '../../api/client'
 import { Siren } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
@@ -15,6 +16,7 @@ const PRIORIDADES = ['Rojo', 'Amarillo', 'Verde']
 export default function Emergencia() {
   const [emergencias, setEmergencias] = useState([])
   const [pacientes, setPacientes] = useState([])
+  const [medicos, setMedicos] = useState([])
   const [soloActivas, setSoloActivas] = useState(true)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
@@ -32,13 +34,30 @@ export default function Emergencia() {
   const [formTriaje, setFormTriaje] = useState({ prioridad: 'Verde', presion: '', temperatura: '', frecuencia_cardiaca: '', saturacion: '' })
   const [formAtencion, setFormAtencion] = useState({ id_medico: '', diagnostico_presuntivo: '', procedimientos_realizados: '' })
 
+  const mapaPacientes = useMemo(() => {
+    const m = {}
+    pacientes.forEach((p) => (m[p.id_paciente] = p.nombre_completo))
+    return m
+  }, [pacientes])
+
+  const mapaMedicos = useMemo(() => {
+    const m = {}
+    medicos.forEach((doc) => (m[doc.id_medico] = doc.nombre_usuario))
+    return m
+  }, [medicos])
+
   const cargar = async (activasFlag = soloActivas) => {
     setCargando(true)
     setError('')
     try {
-      const [e, p] = await Promise.all([emergenciaApi.listar(activasFlag), pacientesApi.listar()])
+      const [e, p, ml] = await Promise.all([
+        emergenciaApi.listar(activasFlag),
+        pacientesApi.listar(),
+        citasApi.medicos(),
+      ])
       setEmergencias(e)
       setPacientes(p)
+      setMedicos(ml)
     } catch (err) {
       setError(apiError(err))
     } finally {
@@ -164,7 +183,7 @@ export default function Emergencia() {
           emptyLabel="No hay emergencias registradas."
           columns={[
             { key: 'id_emergencia', header: '#' },
-            { key: 'id_paciente', header: 'Paciente', render: (r) => (r.id_paciente ? `#${r.id_paciente}` : 'NN (sin identificar)') },
+            { key: 'id_paciente', header: 'Paciente', render: (r) => (r.id_paciente ? mapaPacientes[r.id_paciente] || `#${r.id_paciente}` : 'NN (sin identificar)') },
             { key: 'fecha_hora_ingreso', header: 'Ingreso', render: (r) => new Date(r.fecha_hora_ingreso).toLocaleString('es-BO') },
             { key: 'estado', header: 'Estado', render: (r) => <StatusBadge value={r.estado} /> },
           ]}
@@ -172,7 +191,7 @@ export default function Emergencia() {
         />
       )}
 
-      <SidePanel open={panelCrear} onClose={() => setPanelCrear(false)} title="Registrar ingreso por emergencia" subtitle="RF19">
+      <SidePanel open={panelCrear} onClose={() => setPanelCrear(false)} title="Registrar ingreso por emergencia" subtitle="Selecciona el paciente a ingresar.">
         <form onSubmit={guardarIngreso} className="space-y-4">
           {errorForm && <AlertBanner tone="error">{errorForm}</AlertBanner>}
           <div>
@@ -264,14 +283,26 @@ export default function Emergencia() {
                     {atenciones.length === 0 && <p className="text-sm text-inksoft">Sin atención registrada.</p>}
                     {atenciones.map((a) => (
                       <div key={a.id_atencion_emerg} className="siih-card p-3 text-sm">
-                        <p className="text-xs text-inksoft">Médico #{a.id_medico}</p>
+                        <p className="text-xs text-inksoft">Médico: {mapaMedicos[a.id_medico] || `#${a.id_medico}`}</p>
                         <p className="text-ink mt-1">{a.diagnostico_presuntivo || 'Diagnóstico pendiente'}</p>
                         {a.procedimientos_realizados && <p className="text-inksoft text-xs mt-1">{a.procedimientos_realizados}</p>}
                       </div>
                     ))}
                   </div>
                   <form onSubmit={agregarAtencion} className="siih-card p-3 space-y-2">
-                    <input className="siih-input" type="number" placeholder="ID médico" required value={formAtencion.id_medico} onChange={(e) => setFormAtencion({ ...formAtencion, id_medico: e.target.value })} />
+                    <select
+                      className="siih-input"
+                      required
+                      value={formAtencion.id_medico}
+                      onChange={(e) => setFormAtencion({ ...formAtencion, id_medico: e.target.value })}
+                    >
+                      <option value="">Selecciona médico…</option>
+                      {medicos.map((m) => (
+                        <option key={m.id_medico} value={m.id_medico}>
+                          {m.nombre_usuario} (Colegiatura {m.nro_colegiatura})
+                        </option>
+                      ))}
+                    </select>
                     <textarea className="siih-input" rows={2} placeholder="Diagnóstico presuntivo" value={formAtencion.diagnostico_presuntivo} onChange={(e) => setFormAtencion({ ...formAtencion, diagnostico_presuntivo: e.target.value })} />
                     <textarea className="siih-input" rows={2} placeholder="Procedimientos realizados" value={formAtencion.procedimientos_realizados} onChange={(e) => setFormAtencion({ ...formAtencion, procedimientos_realizados: e.target.value })} />
                     <button className="siih-btn-ghost text-xs" type="submit">Registrar atención</button>

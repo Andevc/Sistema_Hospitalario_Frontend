@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { recetasApi } from '../../api/recetas'
+import { farmaciaApi } from '../../api/farmacia'
 import { apiError } from '../../api/client'
 import { Pill } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
@@ -21,6 +22,7 @@ const VACIO = {
 
 export default function Recetas() {
   const [recetas, setRecetas] = useState([])
+  const [medicamentos, setMedicamentos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [panel, setPanel] = useState(null)
@@ -32,7 +34,12 @@ export default function Recetas() {
     setCargando(true)
     setError('')
     try {
-      setRecetas(await recetasApi.listar())
+      const [rList, mList] = await Promise.all([
+        recetasApi.listar(),
+        farmaciaApi.listarMedicamentos()
+      ])
+      setRecetas(rList)
+      setMedicamentos(mList)
     } catch (err) {
       setError(apiError(err))
     } finally {
@@ -114,7 +121,8 @@ export default function Recetas() {
           emptyLabel="No hay recetas registradas."
           columns={[
             { key: 'id_receta', header: '#' },
-            { key: 'id_medicamento', header: 'Medicamento', render: (r) => `#${r.id_medicamento}` },
+            { key: 'paciente', header: 'Paciente', render: (r) => r.paciente_nombre || '—' },
+            { key: 'id_medicamento', header: 'Medicamento', render: (r) => r.medicamento_nombre || `#${r.id_medicamento}` },
             { key: 'dosis', header: 'Dosis' },
             { key: 'cantidad', header: 'Cantidad' },
             { key: 'estado', header: 'Estado', render: (r) => <StatusBadge value={r.estado} /> },
@@ -151,14 +159,20 @@ export default function Recetas() {
             </>
           )}
           <div>
-            <label className="siih-label">ID medicamento</label>
-            <input
+            <label className="siih-label">Medicamento</label>
+            <select
               className="siih-input"
-              type="number"
               required
               value={form.id_medicamento}
               onChange={(e) => setForm({ ...form, id_medicamento: e.target.value })}
-            />
+            >
+              <option value="">Selecciona medicamento…</option>
+              {medicamentos.map((m) => (
+                <option key={m.id_medicamento} value={m.id_medicamento}>
+                  {m.nombre} (Stock: {m.stock_actual} | Bs {Number(m.precio_unitario).toFixed(2)})
+                </option>
+              ))}
+            </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>

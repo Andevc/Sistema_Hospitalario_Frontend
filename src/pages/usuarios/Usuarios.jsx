@@ -83,7 +83,7 @@ export default function Usuarios() {
       <PageHeader
         icon={UserCog}
         title="Usuarios"
-        subtitle="Registro de cuentas y control de acceso por rol (RF12 / RF13)."
+        subtitle="Registro de cuentas y control de acceso."
         action={<button className="siih-btn-primary" onClick={abrirCrear}>Nuevo usuario</button>}
       />
 

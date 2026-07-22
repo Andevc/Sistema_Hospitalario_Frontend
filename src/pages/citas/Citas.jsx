@@ -22,6 +22,7 @@ export default function Citas() {
   const [pacientes, setPacientes] = useState([])
   const [especialidades, setEspecialidades] = useState([])
   const [medicos, setMedicos] = useState([])
+  const [todosMedicos, setTodosMedicos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
 
@@ -37,14 +38,26 @@ export default function Citas() {
     return m
   }, [pacientes])
 
+  const mapaMedicos = useMemo(() => {
+    const m = {}
+    todosMedicos.forEach((doc) => (m[doc.id_medico] = doc.nombre_usuario))
+    return m
+  }, [todosMedicos])
+
   const cargar = async () => {
     setCargando(true)
     setError('')
     try {
-      const [c, p, e] = await Promise.all([citasApi.listar(), pacientesApi.listar(), citasApi.especialidades()])
+      const [c, p, e, ml] = await Promise.all([
+        citasApi.listar(),
+        pacientesApi.listar(),
+        citasApi.especialidades(),
+        citasApi.medicos(),
+      ])
       setCitas(c)
       setPacientes(p)
       setEspecialidades(e)
+      setTodosMedicos(ml)
     } catch (err) {
       setError(apiError(err))
     } finally {
@@ -146,7 +159,7 @@ export default function Citas() {
           columns={[
             { key: 'id_cita', header: '#' },
             { key: 'id_paciente', header: 'Paciente', render: (r) => mapaPacientes[r.id_paciente] || `#${r.id_paciente}` },
-            { key: 'id_medico', header: 'Médico', render: (r) => `#${r.id_medico}` },
+            { key: 'id_medico', header: 'Médico', render: (r) => mapaMedicos[r.id_medico] || `#${r.id_medico}` },
             { key: 'fecha_hora', header: 'Fecha y hora', render: (r) => new Date(r.fecha_hora).toLocaleString('es-BO') },
             { key: 'estado', header: 'Estado', render: (r) => <StatusBadge value={r.estado} /> },
             {
@@ -225,7 +238,7 @@ export default function Citas() {
                   <option value="">Selecciona médico…</option>
                   {medicos.map((m) => (
                     <option key={m.id_medico} value={m.id_medico}>
-                      Colegiatura {m.nro_colegiatura} (#{m.id_medico})
+                      {m.nombre_usuario || 'Médico'} (Colegiatura {m.nro_colegiatura})
                     </option>
                   ))}
                 </select>

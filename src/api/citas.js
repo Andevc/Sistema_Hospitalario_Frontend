@@ -6,6 +6,7 @@ export const citasApi = {
     client
       .get('/citas/medicos-disponibles', { params: { id_especialidad } })
       .then((r) => r.data),
+  medicos: () => client.get('/citas/medicos').then((r) => r.data),
   disponibilidad: (id_medico, fecha_hora) =>
     client
       .get('/citas/disponibilidad', { params: { id_medico, fecha_hora } })

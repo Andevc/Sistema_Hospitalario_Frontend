@@ -68,7 +68,7 @@ export default function Reportes() {
 
   return (
     <div>
-      <PageHeader icon={BarChart3} title="Reportes" subtitle="Estadísticas operativas por rango de fechas (RF11)." />
+      <PageHeader icon={BarChart3} title="Reportes" subtitle="Estadísticas Operativas." />
 
       <form onSubmit={generar} className="siih-card p-4 flex flex-wrap items-end gap-3 mb-6">
         <div>
