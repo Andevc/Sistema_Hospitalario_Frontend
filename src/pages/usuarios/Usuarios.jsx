@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { authApi } from '../../api/auth'
 import { apiError } from '../../api/client'
+import { UserCog } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import DataTable from '../../components/DataTable'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -80,6 +81,7 @@ export default function Usuarios() {
   return (
     <div>
       <PageHeader
+        icon={UserCog}
         title="Usuarios"
         subtitle="Registro de cuentas y control de acceso por rol (RF12 / RF13)."
         action={<button className="siih-btn-primary" onClick={abrirCrear}>Nuevo usuario</button>}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { farmaciaApi } from '../../api/farmacia'
 import { apiError } from '../../api/client'
+import { Pill } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import DataTable from '../../components/DataTable'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -66,6 +67,7 @@ export default function Farmacia() {
   return (
     <div>
       <PageHeader
+        icon={Pill}
         title="Farmacia"
         subtitle="Inventario de medicamentos y dispensación de recetas (RF09)."
         action={<button className="siih-btn-primary" onClick={abrirDispensar}>Dispensar receta</button>}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { laboratorioApi } from '../../api/laboratorio'
 import { apiError } from '../../api/client'
+import { FlaskConical } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import DataTable from '../../components/DataTable'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -91,6 +92,7 @@ export default function Laboratorio() {
   return (
     <div>
       <PageHeader
+        icon={FlaskConical}
         title="Laboratorio"
         subtitle="Exámenes solicitados y resultados (RF08)."
         action={<button className="siih-btn-primary" onClick={abrirCrear}>Registrar examen</button>}

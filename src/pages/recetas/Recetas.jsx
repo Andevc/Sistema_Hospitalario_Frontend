@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { recetasApi } from '../../api/recetas'
 import { apiError } from '../../api/client'
+import { Pill } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import DataTable from '../../components/DataTable'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -96,6 +97,7 @@ export default function Recetas() {
   return (
     <div>
       <PageHeader
+        icon={Pill}
         title="Recetas"
         subtitle="Emisión de recetas médicas (RF07). La dispensación se hace desde Farmacia."
         action={<button className="siih-btn-primary" onClick={abrirCrear}>Emitir receta</button>}

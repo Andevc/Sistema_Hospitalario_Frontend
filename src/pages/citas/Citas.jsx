@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { citasApi } from '../../api/citas'
 import { pacientesApi } from '../../api/pacientes'
 import { apiError } from '../../api/client'
+import { CalendarDays } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import DataTable from '../../components/DataTable'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -128,6 +129,7 @@ export default function Citas() {
   return (
     <div>
       <PageHeader
+        icon={CalendarDays}
         title="Citas"
         subtitle="Programación, reprogramación y cancelación de citas médicas."
         action={<button className="siih-btn-primary" onClick={abrirCrear}>Programar cita</button>}

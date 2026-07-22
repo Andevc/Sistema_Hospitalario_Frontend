@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { facturacionApi } from '../../api/facturacion'
 import { pacientesApi } from '../../api/pacientes'
 import { apiError } from '../../api/client'
+import { Receipt } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import DataTable from '../../components/DataTable'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -86,7 +87,7 @@ export default function Facturacion() {
 
   return (
     <div>
-      <PageHeader title="Facturación" subtitle="Consolidación de cargos pendientes y emisión de factura (RF10)." />
+      <PageHeader icon={Receipt} title="Facturación" subtitle="Consolidación de cargos pendientes y emisión de factura." />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>

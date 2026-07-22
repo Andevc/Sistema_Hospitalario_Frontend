@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { pacientesApi } from '../../api/pacientes'
 import { apiError } from '../../api/client'
+import { Users } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import DataTable from '../../components/DataTable'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -103,6 +104,7 @@ export default function Pacientes() {
   return (
     <div>
       <PageHeader
+        icon={Users}
         title="Pacientes"
         subtitle="Registro y ficha básica de pacientes del hospital."
         action={<button className="siih-btn-primary" onClick={abrirCrear}>Registrar paciente</button>}

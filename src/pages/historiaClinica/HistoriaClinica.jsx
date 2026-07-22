@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { historiaClinicaApi } from '../../api/historiaClinica'
 import { pacientesApi } from '../../api/pacientes'
 import { apiError } from '../../api/client'
+import { FileText } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import DataTable from '../../components/DataTable'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -88,6 +89,7 @@ export default function HistoriaClinica() {
   return (
     <div>
       <PageHeader
+        icon={FileText}
         title="Historia clínica"
         subtitle="Consultas médicas por paciente."
         action={

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { hospitalizacionApi } from '../../api/hospitalizacion'
 import { apiError } from '../../api/client'
+import { BedDouble } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import DataTable from '../../components/DataTable'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -129,6 +130,7 @@ export default function Hospitalizacion() {
   return (
     <div>
       <PageHeader
+        icon={BedDouble}
         title="Hospitalización"
         subtitle="Ingresos, evolución clínica y signos vitales por cama."
         action={<button className="siih-btn-primary" onClick={abrirCrear}>Registrar ingreso</button>}

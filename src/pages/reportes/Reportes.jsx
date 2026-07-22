@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { reportesApi } from '../../api/reportes'
 import { apiError } from '../../api/client'
+import { BarChart3 } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import AlertBanner from '../../components/AlertBanner'
@@ -67,7 +68,7 @@ export default function Reportes() {
 
   return (
     <div>
-      <PageHeader title="Reportes" subtitle="Estadísticas operativas por rango de fechas (RF11)." />
+      <PageHeader icon={BarChart3} title="Reportes" subtitle="Estadísticas operativas por rango de fechas (RF11)." />
 
       <form onSubmit={generar} className="siih-card p-4 flex flex-wrap items-end gap-3 mb-6">
         <div>

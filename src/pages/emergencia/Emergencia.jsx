@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { emergenciaApi } from '../../api/emergencia'
 import { pacientesApi } from '../../api/pacientes'
 import { apiError } from '../../api/client'
+import { Siren } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import DataTable from '../../components/DataTable'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -141,6 +142,7 @@ export default function Emergencia() {
   return (
     <div>
       <PageHeader
+        icon={Siren}
         title="Emergencia"
         subtitle="Ingreso, triaje y atención inmediata (RF19-RF21)."
         action={<button className="siih-btn-primary" onClick={abrirCrear}>Registrar ingreso</button>}
