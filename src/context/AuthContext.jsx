@@ -12,6 +12,10 @@ function readStoredUser() {
   }
 }
 
+function normalizeRole(role) {
+  return role?.toString().trim().toLowerCase() || ''
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(readStoredUser())
   const [token, setToken] = useState(localStorage.getItem('siih_token'))
@@ -33,7 +37,11 @@ export function AuthProvider({ children }) {
     setUser(null)
   }, [])
 
-  const hasRole = useCallback((...roles) => !!user && roles.includes(user.rol), [user])
+  const hasRole = useCallback((...roles) => {
+    if (!user) return false
+    const userRole = normalizeRole(user.rol)
+    return roles.some((role) => normalizeRole(role) === userRole)
+  }, [user])
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, hasRole, isAuthenticated: !!token }}>

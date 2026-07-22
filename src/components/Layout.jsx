@@ -5,30 +5,30 @@ const GRUPOS = [
   {
     titulo: 'Recepción',
     items: [
-      { to: '/pacientes', label: 'Pacientes' },
-      { to: '/citas', label: 'Citas' },
+      { to: '/pacientes', label: 'Pacientes', roles: ['Administrador', 'Recepcionista', 'Medico', 'Enfermero'] },
+      { to: '/citas', label: 'Citas', roles: ['Administrador', 'Recepcionista', 'Medico', 'Enfermero'] },
     ],
   },
   {
     titulo: 'Atención',
     items: [
-      { to: '/emergencia', label: 'Emergencia' },
-      { to: '/historia-clinica', label: 'Historia clínica' },
-      { to: '/laboratorio', label: 'Laboratorio' },
-      { to: '/recetas', label: 'Recetas' },
-      { to: '/hospitalizacion', label: 'Hospitalización' },
+      { to: '/emergencia', label: 'Emergencia', roles: ['Administrador', 'Recepcionista', 'Medico', 'Enfermero'] },
+      { to: '/historia-clinica', label: 'Historia clínica', roles: ['Administrador', 'Medico', 'Enfermero'] },
+      { to: '/laboratorio', label: 'Laboratorio', roles: ['Administrador', 'Medico', 'Enfermero'] },
+      { to: '/recetas', label: 'Recetas', roles: ['Administrador', 'Medico', 'Farmaceutico'] },
+      { to: '/hospitalizacion', label: 'Hospitalización', roles: ['Administrador', 'Medico', 'Enfermero'] },
     ],
   },
   {
     titulo: 'Soporte clínico',
-    items: [{ to: '/farmacia', label: 'Farmacia' }],
+    items: [{ to: '/farmacia', label: 'Farmacia', roles: ['Administrador', 'Farmaceutico', 'Enfermero'] }],
   },
   {
     titulo: 'Administración',
     items: [
-      { to: '/facturacion', label: 'Facturación' },
-      { to: '/reportes', label: 'Reportes' },
-      { to: '/usuarios', label: 'Usuarios', adminOnly: true },
+      { to: '/facturacion', label: 'Facturación', roles: ['Administrador', 'Recepcionista'] },
+      { to: '/reportes', label: 'Reportes', roles: ['Administrador', 'Medico', 'Recepcionista', 'Enfermero'] },
+      { to: '/usuarios', label: 'Usuarios', roles: ['Administrador'] },
     ],
   },
 ]
@@ -51,7 +51,7 @@ export default function Layout() {
         </div>
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
           {GRUPOS.map((grupo) => {
-            const items = grupo.items.filter((it) => !it.adminOnly || hasRole('Administrador'))
+            const items = grupo.items.filter((it) => !it.roles || it.roles.length === 0 || hasRole(...it.roles))
             if (items.length === 0) return null
             return (
               <div key={grupo.titulo}>

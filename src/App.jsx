@@ -31,16 +31,86 @@ export default function App() {
             }
           >
             <Route index element={<Dashboard />} />
-            <Route path="pacientes" element={<Pacientes />} />
-            <Route path="citas" element={<Citas />} />
-            <Route path="historia-clinica" element={<HistoriaClinica />} />
-            <Route path="laboratorio" element={<Laboratorio />} />
-            <Route path="recetas" element={<Recetas />} />
-            <Route path="hospitalizacion" element={<Hospitalizacion />} />
-            <Route path="emergencia" element={<Emergencia />} />
-            <Route path="farmacia" element={<Farmacia />} />
-            <Route path="facturacion" element={<Facturacion />} />
-            <Route path="reportes" element={<Reportes />} />
+            <Route
+              path="pacientes"
+              element={
+                <ProtectedRoute roles={['Administrador', 'Recepcionista', 'Medico', 'Enfermero']}>
+                  <Pacientes />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="citas"
+              element={
+                <ProtectedRoute roles={['Administrador', 'Recepcionista', 'Medico', 'Enfermero']}>
+                  <Citas />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="historia-clinica"
+              element={
+                <ProtectedRoute roles={['Administrador', 'Medico', 'Enfermero']}>
+                  <HistoriaClinica />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="laboratorio"
+              element={
+                <ProtectedRoute roles={['Administrador', 'Medico', 'Enfermero']}>
+                  <Laboratorio />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="recetas"
+              element={
+                <ProtectedRoute roles={['Administrador', 'Medico', 'Farmaceutico']}>
+                  <Recetas />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="hospitalizacion"
+              element={
+                <ProtectedRoute roles={['Administrador', 'Medico', 'Enfermero']}>
+                  <Hospitalizacion />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="emergencia"
+              element={
+                <ProtectedRoute roles={['Administrador', 'Recepcionista', 'Medico', 'Enfermero']}>
+                  <Emergencia />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="farmacia"
+              element={
+                <ProtectedRoute roles={['Administrador', 'Farmaceutico', 'Enfermero']}>
+                  <Farmacia />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="facturacion"
+              element={
+                <ProtectedRoute roles={['Administrador', 'Recepcionista']}>
+                  <Facturacion />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="reportes"
+              element={
+                <ProtectedRoute roles={['Administrador', 'Medico', 'Recepcionista', 'Enfermero']}>
+                  <Reportes />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="usuarios"
               element={
